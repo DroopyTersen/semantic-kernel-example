@@ -8,7 +8,7 @@
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.API/SegalAI.API.csproj"
+        "${workspaceFolder}/EnterpriseAI.API/EnterpriseAI.API.csproj"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -19,7 +19,7 @@
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.CLI/SegalAI.CLI.csproj"
+        "${workspaceFolder}/EnterpriseAI.CLI/EnterpriseAI.CLI.csproj"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -31,7 +31,7 @@
         "watch",
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.API/SegalAI.API.csproj"
+        "${workspaceFolder}/EnterpriseAI.API/EnterpriseAI.API.csproj"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -43,7 +43,7 @@
         "watch",
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.CLI/SegalAI.CLI.csproj"
+        "${workspaceFolder}/EnterpriseAI.CLI/EnterpriseAI.CLI.csproj"
       ],
       "problemMatcher": "$msCompile"
     }

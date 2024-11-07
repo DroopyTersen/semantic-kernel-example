@@ -1,8 +1,8 @@
-# Segal AI Demo
+# Enterprise AI Demo
 
 ## Purpose
 
-Segal AI Demo is a web API and CLI application designed to facilitate AI-driven chat interactions. It integrates Azure's OpenAI and search services to provide context-aware, retrieval-augmented conversations, solving the problem of creating informed and intelligent chat experiences.
+Enterprise AI Demo is a web API and CLI application designed to facilitate AI-driven chat interactions. It integrates Azure's OpenAI and search services to provide context-aware, retrieval-augmented conversations, solving the problem of creating informed and intelligent chat experiences.
 
 ## Tech Stack
 
@@ -18,9 +18,9 @@ Segal AI Demo is a web API and CLI application designed to facilitate AI-driven 
 
 | Path          | Purpose                                                                     |
 | ------------- | --------------------------------------------------------------------------- |
-| /SegalAI.Core | Contains the core business logic and services used across the project.      |
-| /SegalAI.API  | Hosts the Web API implementation, including controllers and configurations. |
-| /SegalAI.CLI  | Contains the console application for testing core functionalities.          |
+| /EnterpriseAI.Core | Contains the core business logic and services used across the project.      |
+| /EnterpriseAI.API  | Hosts the Web API implementation, including controllers and configurations. |
+| /EnterpriseAI.CLI  | Contains the console application for testing core functionalities.          |
 | /docs         | Provides documentation related to project setup and development.            |
 
 ## Developer Setup
@@ -35,7 +35,7 @@ Open a terminal and clone the project:
 
 ```bash
 git clone <YOUR_REPO>
-cd SegalAI
+cd EnterpriseAI
 ```
 
 ### 3. Setup Local Configuration
@@ -45,7 +45,7 @@ Each project (API and CLI) requires its own local settings file for secrets.
 1. For the API:
 
    ```bash
-   cd SegalAI.API
+   cd EnterpriseAI.API
    cp appsettings.local.Example.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
@@ -53,7 +53,7 @@ Each project (API and CLI) requires its own local settings file for secrets.
 2. For the CLI:
 
    ```bash
-   cd SegalAI.CLI
+   cd EnterpriseAI.CLI
    cp appsettings.local.Example.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
@@ -73,19 +73,19 @@ Each project (API and CLI) requires its own local settings file for secrets.
 2. Run the API:
 
    ```bash
-   dotnet run --project SegalAI.API
+   dotnet run --project EnterpriseAI.API
    ```
 
 3. Run the CLI:
 
    ```bash
-   dotnet run --project SegalAI.CLI
+   dotnet run --project EnterpriseAI.CLI
    ```
 
 4. Optionally, run the API with watch mode (auto-recompile):
 
    ```bash
-   dotnet watch run --project SegalAI.API
+   dotnet watch run --project EnterpriseAI.API
    ```
 
 ## Local Settings Setup
@@ -95,14 +95,14 @@ Each project (API and CLI) needs its own local settings file for secrets.
 1. For the API:
 
    ```bash
-   cd SegalAI.API
+   cd EnterpriseAI.API
    cp appsettings.local.template.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
 
 2. For the CLI:
    ```bash
-   cd SegalAI.CLI
+   cd EnterpriseAI.CLI
    cp appsettings.local.template.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
@@ -146,18 +146,18 @@ Each project (API and CLI) needs its own local settings file for secrets.
 
 ```mermaid
 graph TD
-    subgraph Core[SegalAI.Core]
+    subgraph Core[EnterpriseAI.Core]
         KS[KernelService]
         RS[RagService]
         CR[ChatRepository]
         SS[SearchService]
     end
 
-    subgraph API[SegalAI.API]
+    subgraph API[EnterpriseAI.API]
         CC[ChatController]
     end
 
-    subgraph CLI[SegalAI.CLI]
+    subgraph CLI[EnterpriseAI.CLI]
         CP[ConsoleProgram]
     end
 
@@ -193,8 +193,8 @@ graph TD
 
 | Name                 | Usage Explanation                                                         | Source Code                                                          |
 | -------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Azure OpenAI API     | Used for generating text responses and embeddings in the chatbot.         | [KernelService.cs](SegalAI.Core/Services/KernelService.cs)           |
-| Azure Search Service | Used for querying documents with semantic and vector search capabilities. | [AzureSearchService.cs](SegalAI.Core/Services/AzureSearchService.cs) |
+| Azure OpenAI API     | Used for generating text responses and embeddings in the chatbot.         | [KernelService.cs](EnterpriseAI.Core/Services/KernelService.cs)           |
+| Azure Search Service | Used for querying documents with semantic and vector search capabilities. | [AzureSearchService.cs](EnterpriseAI.Core/Services/AzureSearchService.cs) |
 
 ## Exposed Endpoints
 

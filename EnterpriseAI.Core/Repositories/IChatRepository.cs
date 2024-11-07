@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SegalAI.Core.Models;
+using EnterpriseAI.Core.Models;
 
-namespace SegalAI.Core.Repositories;
+namespace EnterpriseAI.Core.Repositories;
 
 public interface IChatRepository
 {

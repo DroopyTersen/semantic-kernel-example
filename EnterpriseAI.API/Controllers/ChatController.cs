@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using SegalAI.Core.Models;
-using SegalAI.Core.Repositories;
-using SegalAI.Core.Services;
+using EnterpriseAI.Core.Models;
+using EnterpriseAI.Core.Repositories;
+using EnterpriseAI.Core.Services;
 using System.Text.Json.Serialization;
 
-namespace SegalAI.API.Controllers;
+namespace EnterpriseAI.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]

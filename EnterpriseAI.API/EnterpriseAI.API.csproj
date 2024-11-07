@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SegalAI.Core\SegalAI.Core.csproj" />
+    <ProjectReference Include="..\EnterpriseAI.Core\EnterpriseAI.Core.csproj" />
   </ItemGroup>
 
 </Project>

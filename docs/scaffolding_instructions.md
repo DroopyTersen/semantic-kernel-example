@@ -1,6 +1,6 @@
-# SegalAI Project Setup Documentation
+# EnterpriseAI Project Setup Documentation
 
-This document outlines the complete setup process for the SegalAI solution, including the initial project scaffolding and Semantic Kernel integration.
+This document outlines the complete setup process for the EnterpriseAI solution, including the initial project scaffolding and Semantic Kernel integration.
 
 ## Initial Solution Setup
 
@@ -8,28 +8,28 @@ First, create the solution and project structure:
 
 ```bash
 # Create solution and directory
-mkdir SegalAI
-cd SegalAI
-dotnet new sln -n SegalAI
+mkdir EnterpriseAI
+cd EnterpriseAI
+dotnet new sln -n EnterpriseAI
 
 # Create projects
-dotnet new classlib -n SegalAI.Core
-dotnet new webapi -n SegalAI.API
-dotnet new console -n SegalAI.CLI
+dotnet new classlib -n EnterpriseAI.Core
+dotnet new webapi -n EnterpriseAI.API
+dotnet new console -n EnterpriseAI.CLI
 
 # Add projects to solution
-dotnet sln add SegalAI.Core/SegalAI.Core.csproj
-dotnet sln add SegalAI.API/SegalAI.API.csproj
-dotnet sln add SegalAI.CLI/SegalAI.CLI.csproj
+dotnet sln add EnterpriseAI.Core/EnterpriseAI.Core.csproj
+dotnet sln add EnterpriseAI.API/EnterpriseAI.API.csproj
+dotnet sln add EnterpriseAI.CLI/EnterpriseAI.CLI.csproj
 
 # Add project references
-cd SegalAI.API
-dotnet add reference ../SegalAI.Core/SegalAI.Core.csproj
-cd ../SegalAI.CLI
-dotnet add reference ../SegalAI.Core/SegalAI.Core.csproj
+cd EnterpriseAI.API
+dotnet add reference ../EnterpriseAI.Core/EnterpriseAI.Core.csproj
+cd ../EnterpriseAI.CLI
+dotnet add reference ../EnterpriseAI.Core/EnterpriseAI.Core.csproj
 
 # Add Swagger packages to API project
-cd ../SegalAI.API
+cd ../EnterpriseAI.API
 dotnet add package Swashbuckle.AspNetCore
 
 # Return to solution root
@@ -45,16 +45,16 @@ dotnet build
 After running these commands, you'll have the following structure:
 
 ```
-SegalAI/
-├── SegalAI.sln
-├── SegalAI.Core/
-├── SegalAI.API/
-└── SegalAI.CLI/
+EnterpriseAI/
+├── EnterpriseAI.sln
+├── EnterpriseAI.Core/
+├── EnterpriseAI.API/
+└── EnterpriseAI.CLI/
 ```
 
-- **SegalAI.Core**: Class library containing shared business logic
-- **SegalAI.API**: Web API with Swagger integration
-- **SegalAI.CLI**: Console application for testing Core functionality
+- **EnterpriseAI.Core**: Class library containing shared business logic
+- **EnterpriseAI.API**: Web API with Swagger integration
+- **EnterpriseAI.CLI**: Console application for testing Core functionality
 
 ## Running the Projects
 
@@ -62,13 +62,13 @@ You can run the projects using these commands:
 
 ```bash
 # Run the API
-dotnet run --project SegalAI.API
+dotnet run --project EnterpriseAI.API
 
 # Run the CLI
-dotnet run --project SegalAI.CLI
+dotnet run --project EnterpriseAI.CLI
 
 # Run API with watch mode (auto-recompile)
-dotnet watch run --project SegalAI.API
+dotnet watch run --project EnterpriseAI.API
 ```
 
 ## VS Code Integration
@@ -86,7 +86,7 @@ Create `.vscode/tasks.json`:
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.API/SegalAI.API.csproj"
+        "${workspaceFolder}/EnterpriseAI.API/EnterpriseAI.API.csproj"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -97,7 +97,7 @@ Create `.vscode/tasks.json`:
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.CLI/SegalAI.CLI.csproj"
+        "${workspaceFolder}/EnterpriseAI.CLI/EnterpriseAI.CLI.csproj"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -109,7 +109,7 @@ Create `.vscode/tasks.json`:
         "watch",
         "run",
         "--project",
-        "${workspaceFolder}/SegalAI.API/SegalAI.API.csproj"
+        "${workspaceFolder}/EnterpriseAI.API/EnterpriseAI.API.csproj"
       ],
       "problemMatcher": "$msCompile"
     }
@@ -122,7 +122,7 @@ Create `.vscode/tasks.json`:
 Add required packages to the Core project:
 
 ```bash
-cd SegalAI.Core
+cd EnterpriseAI.Core
 dotnet add package Microsoft.SemanticKernel
 dotnet add package Microsoft.Extensions.Configuration
 dotnet add package Microsoft.Extensions.Configuration.Json
@@ -134,9 +134,9 @@ dotnet add package Microsoft.Extensions.Configuration.UserSecrets
 Enable user secrets for API and CLI projects:
 
 ```bash
-cd ../SegalAI.API
+cd ../EnterpriseAI.API
 dotnet user-secrets init
-cd ../SegalAI.CLI
+cd ../EnterpriseAI.CLI
 dotnet user-secrets init
 ```
 
@@ -145,7 +145,7 @@ dotnet user-secrets init
 #### AIServiceConfig.cs
 
 ```csharp
-namespace SegalAI.Core.Configuration;
+namespace EnterpriseAI.Core.Configuration;
 
 public class AIServiceConfig
 {
@@ -163,7 +163,7 @@ public class AIServiceConfig
 using Microsoft.SemanticKernel;
 using Microsoft.Extensions.Configuration;
 
-namespace SegalAI.Core.Services;
+namespace EnterpriseAI.Core.Services;
 
 public class KernelService
 {
@@ -224,7 +224,7 @@ Each project (API and CLI) needs its own local settings file for secrets.
 1. For the API:
 
    ```bash
-   cd SegalAI.API
+   cd EnterpriseAI.API
    cp appsettings.local.template.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
@@ -232,7 +232,7 @@ Each project (API and CLI) needs its own local settings file for secrets.
 2. For the CLI:
 
    ```bash
-   cd SegalAI.CLI
+   cd EnterpriseAI.CLI
    cp appsettings.local.template.json appsettings.local.json
    # Edit appsettings.local.json with your secrets
    ```
@@ -244,8 +244,8 @@ The `appsettings.local.json` files are gitignored and won't be committed.
 #### API Program.cs
 
 ```csharp
-using SegalAI.Core.Configuration;
-using SegalAI.Core.Services;
+using EnterpriseAI.Core.Configuration;
+using EnterpriseAI.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -269,8 +269,8 @@ builder.Services.AddSingleton<KernelService>();
 
 ```csharp
 using Microsoft.Extensions.Configuration;
-using SegalAI.Core.Configuration;
-using SegalAI.Core.Services;
+using EnterpriseAI.Core.Configuration;
+using EnterpriseAI.Core.Services;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -297,7 +297,7 @@ dotnet build
 2. Run the API:
 
 ```bash
-dotnet run --project SegalAI.API
+dotnet run --project EnterpriseAI.API
 ```
 
 3. Check Swagger UI at http://localhost:5000/swagger or https://localhost:5001/swagger
@@ -305,7 +305,7 @@ dotnet run --project SegalAI.API
 4. Run the CLI:
 
 ```bash
-dotnet run --project SegalAI.CLI
+dotnet run --project EnterpriseAI.CLI
 ```
 
 ## Next Steps

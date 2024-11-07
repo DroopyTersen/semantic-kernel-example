@@ -1,5 +1,5 @@
 using Microsoft.SemanticKernel.ChatCompletion;
-using SegalAI.Core.Models;
+using EnterpriseAI.Core.Models;
 
 public class QuestionExtractor
 {

@@ -2,7 +2,7 @@ using System;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 
-namespace SegalAI.Core.Models;
+namespace EnterpriseAI.Core.Models;
 
 public enum MessageRole
 {

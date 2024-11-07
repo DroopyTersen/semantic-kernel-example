@@ -2,11 +2,11 @@
 
 using Microsoft.SemanticKernel;
 using Microsoft.Extensions.Configuration;
-using SegalAI.Core.Configuration;
+using EnterpriseAI.Core.Configuration;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Embeddings;
 
-namespace SegalAI.Core.Services;
+namespace EnterpriseAI.Core.Services;
 
 public class KernelService
 {

@@ -1,4 +1,4 @@
-namespace SegalAI.Core.Services;
+namespace EnterpriseAI.Core.Services;
 using System.Text.Json.Serialization;
 
 public interface IHybridSearchService

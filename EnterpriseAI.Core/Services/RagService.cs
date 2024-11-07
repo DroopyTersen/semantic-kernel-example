@@ -1,10 +1,10 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using SegalAI.Core.Models;
-using SegalAI.Core.Repositories;
+using EnterpriseAI.Core.Models;
+using EnterpriseAI.Core.Repositories;
 using Microsoft.SemanticKernel.Embeddings;
 
-namespace SegalAI.Core.Services;
+namespace EnterpriseAI.Core.Services;
 
 public class RagService
 {

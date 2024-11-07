@@ -1,6 +1,6 @@
-using SegalAI.Core.Configuration;
-using SegalAI.Core.Repositories;
-using SegalAI.Core.Services;
+using EnterpriseAI.Core.Configuration;
+using EnterpriseAI.Core.Repositories;
+using EnterpriseAI.Core.Services;
 using Azure.Search.Documents;
 using Microsoft.Extensions.Options;
 using Azure;

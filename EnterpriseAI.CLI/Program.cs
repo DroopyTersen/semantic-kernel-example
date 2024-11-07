@@ -1,11 +1,11 @@
 ﻿using Azure;
 using Azure.Search.Documents;
 using Microsoft.Extensions.Configuration;
-using SegalAI.Core.Configuration;
-using SegalAI.Core.Services;
+using EnterpriseAI.Core.Configuration;
+using EnterpriseAI.Core.Services;
 
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "./SegalAI.CLI"))
+    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "./EnterpriseAI.CLI"))
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()

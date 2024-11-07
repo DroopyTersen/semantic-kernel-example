@@ -2,7 +2,7 @@ using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 
-namespace SegalAI.Core.Services;
+namespace EnterpriseAI.Core.Services;
 
 public class AzureSearchService(SearchClient searchClient) : IHybridSearchService
 {

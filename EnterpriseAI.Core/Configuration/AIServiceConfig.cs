@@ -1,4 +1,4 @@
-﻿namespace SegalAI.Core.Configuration;
+﻿namespace EnterpriseAI.Core.Configuration;
 
 public class AIServiceConfig
 {
