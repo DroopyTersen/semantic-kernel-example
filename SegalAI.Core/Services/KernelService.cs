@@ -1,30 +1,51 @@
-﻿using Microsoft.SemanticKernel;
+﻿#pragma warning disable SKEXP0010
+
+using Microsoft.SemanticKernel;
 using Microsoft.Extensions.Configuration;
 using SegalAI.Core.Configuration;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Embeddings;
 
 namespace SegalAI.Core.Services;
 
 public class KernelService
 {
   private readonly Kernel _kernel;
-  private readonly AIServiceConfig _config;
+  private readonly AIServiceConfig config;
 
-  public KernelService(IConfiguration configuration)
+  public KernelService(AIServiceConfig config)
   {
-    _config = configuration.GetSection("AIService").Get<AIServiceConfig>()
-        ?? throw new InvalidOperationException("AIService configuration is missing");
-    Console.WriteLine(_config.AzureOpenAIApiKey);
+    this.config = config ?? throw new ArgumentNullException(nameof(config));
+
+    ValidateConfiguration(config);
+
     var builder = Kernel.CreateBuilder()
         .AddAzureOpenAIChatCompletion(
-            deploymentName: _config.ModelDeploymentName,
-            endpoint: _config.AzureOpenAIEndpoint,
-            apiKey: _config.AzureOpenAIApiKey
+            deploymentName: config.ModelDeploymentName,
+            endpoint: config.AzureOpenAIEndpoint,
+            apiKey: config.AzureOpenAIApiKey
         );
+    builder.AddAzureOpenAITextEmbeddingGeneration(
+        deploymentName: config.EmbeddingDeploymentName,
+        endpoint: config.AzureOpenAIEndpoint,
+        apiKey: config.AzureOpenAIApiKey,
+        dimensions: 1024
+    );
 
     _kernel = builder.Build();
   }
 
   public Kernel Kernel => _kernel;
-  public IChatCompletionService ChatCompletionService => _kernel.GetRequiredService<IChatCompletionService>();
+
+  private void ValidateConfiguration(AIServiceConfig config)
+  {
+    if (string.IsNullOrEmpty(config.ModelDeploymentName))
+      throw new ArgumentException("ModelDeploymentName cannot be null or empty", nameof(config));
+    if (string.IsNullOrEmpty(config.AzureOpenAIEndpoint))
+      throw new ArgumentException("AzureOpenAIEndpoint cannot be null or empty", nameof(config));
+    if (string.IsNullOrEmpty(config.AzureOpenAIApiKey))
+      throw new ArgumentException("AzureOpenAIApiKey cannot be null or empty", nameof(config));
+    if (string.IsNullOrEmpty(config.EmbeddingDeploymentName))
+      throw new ArgumentException("EmbeddingDeploymentName cannot be null or empty", nameof(config));
+  }
 }

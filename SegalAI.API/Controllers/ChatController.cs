@@ -12,12 +12,12 @@ public class ChatController : ControllerBase
 {
   private readonly KernelService _kernelService;
   private readonly IChatRepository _chatRepository;
-  private readonly Dictionary<string, RagService> _conversations = new();
-
-  public ChatController(KernelService kernelService, IChatRepository chatRepository)
+  private readonly IHybridSearchService _searchService;
+  public ChatController(KernelService kernelService, IChatRepository chatRepository, IHybridSearchService searchService)
   {
     _kernelService = kernelService;
     _chatRepository = chatRepository;
+    _searchService = searchService;
   }
 
   [HttpGet("{conversationId}")]
@@ -43,14 +43,18 @@ public class ChatController : ControllerBase
     }
 
     var conversation = GetOrCreateConversation(conversationId);
-    var response = await conversation.SubmitMessage(request.Message);
+    var response = await conversation.SubmitMessageAsync(request.Message);
 
     return Ok(response);
   }
 
   private RagService GetOrCreateConversation(string conversationId)
   {
-    return new RagService(conversationId, _kernelService.Kernel, _chatRepository);
+    return new RagService(
+        conversationId,
+        _kernelService.Kernel,
+        _chatRepository,
+        _searchService);
   }
 }
 

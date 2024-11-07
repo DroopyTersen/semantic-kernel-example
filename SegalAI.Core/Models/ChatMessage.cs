@@ -1,4 +1,6 @@
 using System;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace SegalAI.Core.Models;
 
@@ -20,5 +22,16 @@ public class ChatMessage
     Role = role;
     Content = content;
     Timestamp = DateTimeOffset.UtcNow;
+  }
+  public static ChatMessageContent ToKernelMessage(ChatMessage message)
+  {
+    var role = message.Role switch
+    {
+      MessageRole.System => AuthorRole.System,
+      MessageRole.User => AuthorRole.User,
+      MessageRole.Assistant => AuthorRole.Assistant,
+      _ => throw new ArgumentException($"Unknown role: {message.Role}")
+    };
+    return new ChatMessageContent(role, message.Content);
   }
 }
