@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using SegalAI.API.Models;
+using SegalAI.Core.Models;
 using SegalAI.Core.Repositories;
 using SegalAI.Core.Services;
+using System.Text.Json.Serialization;
 
 namespace SegalAI.API.Controllers;
 
@@ -20,23 +21,17 @@ public class ChatController : ControllerBase
   }
 
   [HttpGet("{conversationId}")]
-  [ProducesResponseType(typeof(ChatConversationResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(IEnumerable<ChatMessage>), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
-  public IActionResult GetConversation(string conversationId)
+  public ActionResult<IEnumerable<ChatMessage>> GetConversation(string conversationId)
   {
     var conversation = GetOrCreateConversation(conversationId);
-    var messages = conversation.GetAllMessages()
-        .Select(ChatMessage.FromKernelMessage)
-        .ToList();
-
-    return Ok(new ChatConversationResponse(
-        ConversationId: conversationId,
-        Messages: messages
-    ));
+    var messages = conversation.GetAllMessages();
+    return Ok(messages);
   }
 
   [HttpPost("{conversationId}/submit")]
-  [ProducesResponseType(typeof(SubmitMessageResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status400BadRequest)]
   public async Task<IActionResult> SubmitMessage(
       string conversationId,
@@ -50,9 +45,7 @@ public class ChatController : ControllerBase
     var conversation = GetOrCreateConversation(conversationId);
     var response = await conversation.SubmitMessage(request.Message);
 
-    return Ok(new SubmitMessageResponse(
-        Response: response
-    ));
+    return Ok(response);
   }
 
   private RagService GetOrCreateConversation(string conversationId)
@@ -60,3 +53,8 @@ public class ChatController : ControllerBase
     return new RagService(conversationId, _kernelService.Kernel, _chatRepository);
   }
 }
+
+public record SubmitMessageRequest(
+    [property: JsonPropertyName("message")]
+    string Message
+);

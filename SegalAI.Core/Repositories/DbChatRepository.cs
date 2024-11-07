@@ -1,32 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.SemanticKernel;
+using SegalAI.Core.Models;
 
 namespace SegalAI.Core.Repositories;
 
 public class DbChatRepository : IChatRepository
 {
-  public IEnumerable<ChatMessageContent> LoadConversation(string conversationId)
+  public IEnumerable<ChatMessage> LoadConversation(string conversationId)
   {
     // TODO: Implement database loading logic
     // Example pseudo-code:
     // return _dbContext.Messages
     //     .Where(m => m.ConversationId == conversationId)
     //     .OrderBy(m => m.Timestamp)
-    //     .Select(m => new ChatMessage(m.Role, m.Content));
+    //     .Select(m => new ChatMessage(
+    //         Enum.Parse<MessageRole>(m.Role),
+    //         m.Content
+    //     ));
 
     throw new NotImplementedException();
   }
 
-  public Task SaveMessage(string conversationId, ChatMessageContent message)
+  public Task SaveMessage(string conversationId, ChatMessage message)
   {
     // TODO: Implement database saving logic
     // Example pseudo-code:
     // await _dbContext.Messages.AddAsync(new MessageEntity
     // {
     //     ConversationId = conversationId,
-    //     Role = message.Role,
+    //     Role = message.Role.ToString(),
     //     Content = message.Content,
     //     Timestamp = message.Timestamp
     // });

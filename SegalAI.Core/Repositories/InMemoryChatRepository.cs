@@ -1,25 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.SemanticKernel;
-using SegalAI.Core.Repositories;
+using SegalAI.Core.Models;
+
+namespace SegalAI.Core.Repositories;
 
 public class InMemoryChatRepository : IChatRepository
 {
-  private readonly Dictionary<string, List<ChatMessageContent>> _conversations = new();
+  private readonly Dictionary<string, List<ChatMessage>> _conversations = new();
 
-  public IEnumerable<ChatMessageContent> LoadConversation(string conversationId)
+  public IEnumerable<ChatMessage> LoadConversation(string conversationId)
   {
     return _conversations.TryGetValue(conversationId, out var messages)
         ? messages
-        : Enumerable.Empty<ChatMessageContent>();
+        : Enumerable.Empty<ChatMessage>();
   }
 
-  public Task SaveMessage(string conversationId, ChatMessageContent message)
+  public Task SaveMessage(string conversationId, ChatMessage message)
   {
     if (!_conversations.ContainsKey(conversationId))
     {
-      _conversations[conversationId] = new List<ChatMessageContent>();
+      _conversations[conversationId] = new List<ChatMessage>();
     }
 
     _conversations[conversationId].Add(message);

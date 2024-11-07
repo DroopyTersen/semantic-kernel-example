@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.SemanticKernel;
+using SegalAI.Core.Models;
 
 namespace SegalAI.Core.Repositories;
 
 public interface IChatRepository
 {
-  IEnumerable<ChatMessageContent> LoadConversation(string conversationId);
-  Task SaveMessage(string conversationId, ChatMessageContent message);
+  IEnumerable<ChatMessage> LoadConversation(string conversationId);
+  Task SaveMessage(string conversationId, ChatMessage message);
 }
