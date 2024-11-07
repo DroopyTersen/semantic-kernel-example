@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegalAI.Core", "SegalAI.Core\SegalAI.Core.csproj", "{C802FAA8-0E09-4A72-BFAB-8B3D5002015F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegalAI.API", "SegalAI.API\SegalAI.API.csproj", "{3AAF3DA9-B1F7-4798-A246-D4E773A0AEE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SegalAI.CLI", "SegalAI.CLI\SegalAI.CLI.csproj", "{90C4980F-0044-4BDA-98CA-142CED61B44E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C802FAA8-0E09-4A72-BFAB-8B3D5002015F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C802FAA8-0E09-4A72-BFAB-8B3D5002015F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C802FAA8-0E09-4A72-BFAB-8B3D5002015F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C802FAA8-0E09-4A72-BFAB-8B3D5002015F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AAF3DA9-B1F7-4798-A246-D4E773A0AEE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AAF3DA9-B1F7-4798-A246-D4E773A0AEE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AAF3DA9-B1F7-4798-A246-D4E773A0AEE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AAF3DA9-B1F7-4798-A246-D4E773A0AEE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90C4980F-0044-4BDA-98CA-142CED61B44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90C4980F-0044-4BDA-98CA-142CED61B44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90C4980F-0044-4BDA-98CA-142CED61B44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90C4980F-0044-4BDA-98CA-142CED61B44E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
