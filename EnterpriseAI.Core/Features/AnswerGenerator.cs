@@ -1,22 +1,20 @@
-using Microsoft.SemanticKernel.ChatCompletion;
 using EnterpriseAI.Core.Models;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-using EnterpriseAI.Core.Plugins;
-using EnterpriseAI.Core.Services;
 
 public class AnswerGenerator
 {
-  private readonly IChatCompletionService _chatService;
-  private readonly Kernel _kernel;
+    private readonly IChatCompletionService _chatService;
+    private readonly Kernel _kernel;
 
-  public AnswerGenerator(Kernel kernel)
-  {
-    _chatService = kernel.GetRequiredService<IChatCompletionService>();
-    _kernel = kernel;
-  }
+    public AnswerGenerator(Kernel kernel)
+    {
+        _chatService = kernel.GetRequiredService<IChatCompletionService>();
+        _kernel = kernel;
+    }
 
-  private static string GetSystemPrompt() => $@"
+    private static string GetSystemPrompt() => $@"
 You will be provided a list of potentially relevant Data Source pages. Some pages will also include an image of the page if that page contains visual elements like images, charts, or tables.
 
 Use this information as context to answer the question. If provided, make sure to account for visual information represented on the image of the page.
@@ -122,32 +120,32 @@ Source: HR Policy #127, Sections 3.1-3.3, Last Updated March 2024
 </final_output>
 ";
 
-  public async Task<string> AnswerQuestion(IEnumerable<ChatMessage> conversation)
-  {
-    var messages = new ChatHistory(); // Create fresh history
-    messages.AddSystemMessage(GetSystemPrompt());
-
-    // Add existing conversation messages
-    foreach (var message in conversation)
+    public async Task<string> AnswerQuestion(IEnumerable<ChatMessage> conversation)
     {
-      messages.Add(ChatMessage.ToKernelMessage(message));
+        var messages = new ChatHistory(); // Create fresh history
+        messages.AddSystemMessage(GetSystemPrompt());
+
+        // Add existing conversation messages
+        foreach (var message in conversation)
+        {
+            messages.Add(ChatMessage.ToKernelMessage(message));
+        }
+
+        OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
+        {
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+            Temperature = 0.1,
+            MaxTokens = 4000
+        };
+
+        var result = await _chatService.GetChatMessageContentAsync(
+          messages,
+          executionSettings: openAIPromptExecutionSettings,
+          // Provide the kernel which has the Plugins/tools
+          kernel: _kernel
+        );
+
+        // TODO: Once we are happy with the answers, regex to only return inner <final_output>
+        return result?.Content ?? string.Empty;
     }
-
-    OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
-    {
-      FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-      Temperature = 0.1,
-      MaxTokens = 4000
-    };
-
-    var result = await _chatService.GetChatMessageContentAsync(
-      messages,
-      executionSettings: openAIPromptExecutionSettings,
-      // Provide the kernel which has the Plugins/tools
-      kernel: _kernel
-    );
-
-    // TODO: Once we are happy with the answers, regex to only return inner <final_output>
-    return result?.Content ?? string.Empty;
-  }
 }
