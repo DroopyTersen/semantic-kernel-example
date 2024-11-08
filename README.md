@@ -2,26 +2,93 @@
 
 ## Purpose
 
-Enterprise AI Demo is a web API and CLI application designed to facilitate AI-driven chat interactions. It integrates Azure's OpenAI and search services to provide context-aware, retrieval-augmented conversations, solving the problem of creating informed and intelligent chat experiences.
+A demo project showcasing how to build AI chat applications using Microsoft's Semantic Kernel library. It demonstrates retrieval-augmented generation (RAG) patterns by combining Azure OpenAI with Azure Cognitive Search to provide context-aware responses.
 
 ## Tech Stack
 
-| Name                                   | What is it?                                                                                                 |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **ASP.NET Core**                       | A framework for building web APIs and services.                                                             |
-| **Swashbuckle.AspNetCore**             | [Swagger](https://www.nuget.org/packages/Swashbuckle.AspNetCore) integration for Swagger API documentation. |
-| **Microsoft.Extensions.Configuration** | A library for managing application configuration.                                                           |
-| **Microsoft.SemanticKernel**           | A library for semantic kernel operations.                                                                   |
-| **Azure.Search.Documents**             | A library for integrating with Azure Search services.                                                       |
+| Name                | What is it?                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **ASP.NET Core**    | A cross-platform framework for building modern web APIs and services, providing the foundation for the API backend. |
+| **Semantic Kernel** | Microsoft's AI orchestration framework that integrates with Azure OpenAI, handling chat completions and embeddings. |
+| **Azure OpenAI**    | Provides the AI models (GPT-4) and embedding services for generating responses and vector representations.          |
+| **Azure AI Search** | Vector and semantic search service used for RAG (Retrieval Augmented Generation) to provide context to the AI.      |
+| **Swagger/OpenAPI** | API documentation and testing interface, implemented via Swashbuckle.AspNetCore package.                            |
 
 ## Project Structure
 
-| Path          | Purpose                                                                     |
-| ------------- | --------------------------------------------------------------------------- |
+| Path               | Purpose                                                                     |
+| ------------------ | --------------------------------------------------------------------------- |
 | /EnterpriseAI.Core | Contains the core business logic and services used across the project.      |
 | /EnterpriseAI.API  | Hosts the Web API implementation, including controllers and configurations. |
 | /EnterpriseAI.CLI  | Contains the console application for testing core functionalities.          |
-| /docs         | Provides documentation related to project setup and development.            |
+| /docs              | Provides documentation related to project setup and development.            |
+
+## How it works
+
+_High level flow_
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant ConversationService
+    participant SemanticKernel
+    participant AzureServices
+
+    Client->>API: POST /chat/{id}/submit
+    API->>ConversationService: SubmitMessageAsync(message)
+    ConversationService->>SemanticKernel: Process message with RAG
+
+    Note over SemanticKernel,AzureServices: See detailed flow below
+
+    SemanticKernel-->>ConversationService: Enhanced response
+    ConversationService-->>API: Final answer
+    API-->>Client: 200 OK with response
+
+```
+
+_Semantic Kernel orchestrates the RAG process_
+
+```mermaid
+sequenceDiagram
+    participant ConversationService
+    participant AnswerGenerator
+
+    box Semantic Kernel Responsibilities
+    participant KernelService
+    participant AzureAISearchPlugin
+    participant AzureOpenAI
+    participant AzureSearch
+    end
+
+    ConversationService->>AnswerGenerator: AnswerQuestion(conversation)
+    AnswerGenerator->>KernelService: GetChatMessageContent
+
+    Note over KernelService: Initialize with system prompt
+
+    KernelService->>AzureAISearchPlugin: search_relevant_context
+    AzureAISearchPlugin->>AzureOpenAI: GenerateEmbeddingAsync(query)
+    AzureOpenAI-->>AzureAISearchPlugin: query embedding
+    AzureAISearchPlugin->>AzureSearch: QueryDocumentsAsync(embedding)
+    AzureSearch-->>AzureAISearchPlugin: relevant documents
+    AzureAISearchPlugin-->>KernelService: context from documents
+
+    KernelService->>AzureOpenAI: Generate response with context
+    AzureOpenAI-->>KernelService: AI response
+    KernelService-->>AnswerGenerator: formatted response
+    AnswerGenerator-->>ConversationService: final answer
+```
+
+Theses diagrams show how:
+
+1. The request flows from the API endpoint through the ConversationService
+2. The AnswerGenerator uses Semantic Kernel to orchestrate the RAG process
+3. The AzureAISearchPlugin handles vector search:
+   - Generates embeddings for the query
+   - Searches Azure AI Search for relevant documents
+   - Returns context to enhance the AI response
+4. The KernelService coordinates between Azure OpenAI and the search plugin
+5. The response flows back through the layers with the context-enhanced answer
 
 ## Developer Setup
 
@@ -124,7 +191,7 @@ Each project (API and CLI) needs its own local settings file for secrets.
 
 - **Core Services**:
 
-  - **Components**: AIServiceConfig, KernelService, RagService, etc.
+  - **Components**: AIServiceConfig, KernelService, ConversationService, ChatRepository, SearchService, etc.
   - **Role**: Manages AI operations, including question extraction and answer generation.
   - **Connections**: Interfaces with Azure services and repositories for data handling.
 
@@ -147,52 +214,52 @@ Each project (API and CLI) needs its own local settings file for secrets.
 ```mermaid
 graph TD
     subgraph Core[EnterpriseAI.Core]
-        KS[KernelService]
-        RS[RagService]
-        CR[ChatRepository]
-        SS[SearchService]
+        KernelService
+        ConversationService
+        ChatRepository
+        SearchService
     end
 
     subgraph API[EnterpriseAI.API]
-        CC[ChatController]
+        ChatController
     end
 
     subgraph CLI[EnterpriseAI.CLI]
-        CP[ConsoleProgram]
+        ConsoleProgram
     end
 
     subgraph Azure
-        AOAI[Azure OpenAI]
-        AS[Azure Search]
+        AzureOpenAI[Azure OpenAI]
+        AzureSearch[Azure AI Search]
     end
 
     subgraph Config
-        AJ[appsettings.json]
-        AL[appsettings.local.json]
+        AppSettings[appsettings.json]
+        LocalSettings[appsettings.local.json]
     end
 
     %% Core connections
-    KS --> AOAI
-    SS --> AS
-    RS --> KS
-    RS --> SS
-    RS --> CR
+    KernelService --> AzureOpenAI
+    SearchService --> AzureSearch
+    ConversationService --> KernelService
+    ConversationService --> SearchService
+    ConversationService --> ChatRepository
 
     %% API connections
-    CC --> RS
-    AJ --> API
-    AL --> API
+    ChatController --> ConversationService
+    AppSettings --> API
+    LocalSettings --> API
 
     %% CLI connections
-    CP --> RS
-    AJ --> CLI
-    AL --> CLI
+    ConsoleProgram --> ConversationService
+    AppSettings --> CLI
+    LocalSettings --> CLI
 ```
 
 ## External APIs
 
-| Name                 | Usage Explanation                                                         | Source Code                                                          |
-| -------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Name                 | Usage Explanation                                                         | Source Code                                                               |
+| -------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | Azure OpenAI API     | Used for generating text responses and embeddings in the chatbot.         | [KernelService.cs](EnterpriseAI.Core/Services/KernelService.cs)           |
 | Azure Search Service | Used for querying documents with semantic and vector search capabilities. | [AzureSearchService.cs](EnterpriseAI.Core/Services/AzureSearchService.cs) |
 

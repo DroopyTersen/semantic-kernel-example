@@ -2,6 +2,21 @@
 
 This document outlines the complete setup process for the EnterpriseAI solution, including the initial project scaffolding and Semantic Kernel integration.
 
+```
+EnterpriseAI/
+├── EnterpriseAI.sln
+├── EnterpriseAI.API/
+│   ├── Controllers/
+│   └── Properties/
+├── EnterpriseAI.Core/
+│   ├── Configuration/
+│   ├── Models/
+│   ├── Plugins/
+│   ├── Repositories/
+│   └── Services/
+└── EnterpriseAI.CLI/
+```
+
 ## Initial Solution Setup
 
 First, create the solution and project structure:
@@ -117,27 +132,24 @@ Create `.vscode/tasks.json`:
 }
 ```
 
-## Semantic Kernel Integration
+## Add Packages
 
 Add required packages to the Core project:
 
 ```bash
+# Add required packages to Core project
 cd EnterpriseAI.Core
 dotnet add package Microsoft.SemanticKernel
+dotnet add package Azure.Search.Documents
 dotnet add package Microsoft.Extensions.Configuration
 dotnet add package Microsoft.Extensions.Configuration.Json
 dotnet add package Microsoft.Extensions.Configuration.EnvironmentVariables
 dotnet add package Microsoft.Extensions.Configuration.Binder
-dotnet add package Microsoft.Extensions.Configuration.UserSecrets
-```
 
-Enable user secrets for API and CLI projects:
-
-```bash
+# Add API packages
 cd ../EnterpriseAI.API
-dotnet user-secrets init
-cd ../EnterpriseAI.CLI
-dotnet user-secrets init
+dotnet add package Microsoft.AspNetCore.OpenApi
+dotnet add package Swashbuckle.AspNetCore
 ```
 
 ### Configuration Files
@@ -149,11 +161,14 @@ namespace EnterpriseAI.Core.Configuration;
 
 public class AIServiceConfig
 {
-    public required string OpenAIApiKey { get; set; }
-    public required string AzureOpenAIEndpoint { get; set; }
-    public required string AzureOpenAIKey { get; set; }
-    public required string ModelDeploymentName { get; set; }
-    public required string EmbeddingDeploymentName { get; set; }
+  public required string OpenAIApiKey { get; set; }
+  public required string AzureOpenAIEndpoint { get; set; }
+  public required string AzureOpenAIApiKey { get; set; }
+  public required string ModelDeploymentName { get; set; }
+  public required string EmbeddingDeploymentName { get; set; }
+  public required string SearchServiceEndpoint { get; set; }
+  public required string SearchServiceApiKey { get; set; }
+  public required string SearchIndexName { get; set; }
 }
 ```
 
@@ -203,16 +218,13 @@ public class KernelService
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
+  ...
   "AIService": {
-    "ModelDeploymentName": "gpt-4",
-    "EmbeddingDeploymentName": "text-embedding-ada-002"
+    "AzureOpenAIEndpoint": "https://oai-ai-demo-east.openai.azure.com/",
+    "ModelDeploymentName": "gpt-4o-global",
+    "EmbeddingDeploymentName": "text-embedding-3-large",
+    "SearchServiceEndpoint": "https://srch-std-ai-demo.search.windows.net",
+    "SearchIndexName": "idx-chunks"
   }
 }
 ```
@@ -253,9 +265,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .AddEnvironmentVariables()
-    .AddUserSecrets<Program>();
+    .AddEnvironmentVariables();
 
 // Add services
 builder.Services.Configure<AIServiceConfig>(
@@ -276,7 +286,6 @@ var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables()
-    .AddUserSecrets<Program>()
     .Build();
 
 var kernelService = new KernelService(configuration);

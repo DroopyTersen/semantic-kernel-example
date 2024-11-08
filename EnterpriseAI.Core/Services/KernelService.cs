@@ -1,10 +1,13 @@
 ﻿#pragma warning disable SKEXP0010
 
 using Microsoft.SemanticKernel;
-using Microsoft.Extensions.Configuration;
 using EnterpriseAI.Core.Configuration;
-using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Embeddings;
+using Microsoft.Extensions.DependencyInjection;
+using Azure;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using EnterpriseAI.Core.Plugins;
+using Azure.Search.Documents;
 
 namespace EnterpriseAI.Core.Services;
 
@@ -19,18 +22,39 @@ public class KernelService
 
     ValidateConfiguration(config);
 
-    var builder = Kernel.CreateBuilder()
-        .AddAzureOpenAIChatCompletion(
-            deploymentName: config.ModelDeploymentName,
-            endpoint: config.AzureOpenAIEndpoint,
-            apiKey: config.AzureOpenAIApiKey
-        );
-    builder.AddAzureOpenAITextEmbeddingGeneration(
-        deploymentName: config.EmbeddingDeploymentName,
+    var builder = Kernel.CreateBuilder();
+
+    // Add Azure OpenAI chat completion
+    builder.AddAzureOpenAIChatCompletion(
+        deploymentName: config.ModelDeploymentName,
         endpoint: config.AzureOpenAIEndpoint,
-        apiKey: config.AzureOpenAIApiKey,
-        dimensions: 1024
+        apiKey: config.AzureOpenAIApiKey
     );
+
+
+    // Create and register the embedding service directly
+    builder.Services.AddSingleton<ITextEmbeddingGenerationService>((_) =>
+    {
+      return new AzureOpenAITextEmbeddingGenerationService(
+          deploymentName: config.EmbeddingDeploymentName,
+          endpoint: config.AzureOpenAIEndpoint,
+          apiKey: config.AzureOpenAIApiKey,
+          dimensions: 1024
+      );
+    });
+
+    // Add Azure Search service
+    builder.Services.AddSingleton<IHybridSearchService>(sp =>
+    {
+      var searchClient = new SearchClient(
+      new Uri(config.SearchServiceEndpoint),
+      config.SearchIndexName,
+      new AzureKeyCredential(config.SearchServiceApiKey));
+      return new AzureSearchService(searchClient);
+    });
+
+    // Add the "Search" plugin which will allow tool use
+    builder.Plugins.AddFromType<AzureAISearchPlugin>("Search");
 
     _kernel = builder.Build();
   }

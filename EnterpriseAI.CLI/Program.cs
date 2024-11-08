@@ -1,6 +1,4 @@
-﻿using Azure;
-using Azure.Search.Documents;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using EnterpriseAI.Core.Configuration;
 using EnterpriseAI.Core.Services;
 
@@ -14,15 +12,9 @@ var configuration = new ConfigurationBuilder()
 var aiConfig = configuration.GetSection("AIService").Get<AIServiceConfig>()
     ?? throw new InvalidOperationException("AIService configuration is missing");
 
-Console.WriteLine("Config", configuration);
-
 var kernelService = new KernelService(aiConfig);
-var searchClient = new SearchClient(
-        new Uri(aiConfig.SearchServiceEndpoint),
-        aiConfig.SearchIndexName,
-        new AzureKeyCredential(aiConfig.SearchServiceApiKey));
-var searchService = new AzureSearchService(searchClient);
-var conversation = new RagService("123", kernelService.Kernel, searchService: searchService);
+
+var conversation = new ConversationService("123", kernel: kernelService.Kernel);
 // Initiate a back-and-forth chat
 string? userInput;
 do

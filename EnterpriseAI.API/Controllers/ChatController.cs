@@ -11,13 +11,9 @@ namespace EnterpriseAI.API.Controllers;
 public class ChatController : ControllerBase
 {
   private readonly KernelService _kernelService;
-  private readonly IChatRepository _chatRepository;
-  private readonly IHybridSearchService _searchService;
-  public ChatController(KernelService kernelService, IChatRepository chatRepository, IHybridSearchService searchService)
+  public ChatController(KernelService kernelService)
   {
     _kernelService = kernelService;
-    _chatRepository = chatRepository;
-    _searchService = searchService;
   }
 
   [HttpGet("{conversationId}")]
@@ -25,7 +21,9 @@ public class ChatController : ControllerBase
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   public ActionResult<IEnumerable<ChatMessage>> GetConversation(string conversationId)
   {
-    var conversation = GetOrCreateConversation(conversationId);
+    var conversation = new ConversationService(
+        conversationId,
+        _kernelService.Kernel);
     var messages = conversation.GetAllMessages();
     return Ok(messages);
   }
@@ -42,19 +40,10 @@ public class ChatController : ControllerBase
       return BadRequest("Message cannot be empty");
     }
 
-    var conversation = GetOrCreateConversation(conversationId);
+    var conversation = new ConversationService(conversationId, _kernelService.Kernel);
     var response = await conversation.SubmitMessageAsync(request.Message);
 
     return Ok(response);
-  }
-
-  private RagService GetOrCreateConversation(string conversationId)
-  {
-    return new RagService(
-        conversationId,
-        _kernelService.Kernel,
-        _chatRepository,
-        _searchService);
   }
 }
 
