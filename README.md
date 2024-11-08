@@ -2,7 +2,9 @@
 
 ## Purpose
 
-A demo project showcasing how to build AI chat applications using Microsoft's Semantic Kernel library. It demonstrates retrieval-augmented generation (RAG) patterns by combining Azure OpenAI with Azure Cognitive Search to provide context-aware responses.
+A demo project showcasing how to build AI chat applications using Dotnet Core andMicrosoft's Semantic Kernel library. It demonstrates retrieval-augmented generation (RAG) patterns by combining Azure OpenAI with Azure Cognitive Search to provide context-aware responses.
+
+![Swagger Example](docs/assets/swagger-example.png)
 
 ## Tech Stack
 
