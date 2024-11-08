@@ -1,5 +1,21 @@
 # Enterprise AI Demo
 
+- [Purpose](#purpose)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Architecture](#architecture)
+- [How it works](#how-it-works)
+- [Developer Setup](#developer-setup)
+  - [Install Required Tooling](#install-required-tooling)
+  - [Clone the Repository](#clone-the-repository)
+  - [Setup Local Configuration](#setup-local-configuration)
+  - [Build and Run the Project Locally](#build-and-run-the-project-locally)
+- [External APIs](#external-apis)
+- [Exposed Endpoints](#exposed-endpoints)
+  - [Chat API Endpoints](#chat-api-endpoints)
+    - [Get Conversation History](#get-conversation-history)
+    - [Submit Message](#submit-message)
+
 ## Purpose
 
 A demo project showcasing how to build AI chat applications using Dotnet Core andMicrosoft's Semantic Kernel library. It demonstrates retrieval-augmented generation (RAG) patterns by combining Azure OpenAI with Azure Cognitive Search to provide context-aware responses.
@@ -24,6 +40,83 @@ A demo project showcasing how to build AI chat applications using Dotnet Core an
 | /EnterpriseAI.API  | Hosts the Web API implementation, including controllers and configurations. |
 | /EnterpriseAI.CLI  | Contains the console application for testing core functionalities.          |
 | /docs              | Provides documentation related to project setup and development.            |
+
+## Architecture
+
+```mermaid
+graph TD
+    subgraph Core[EnterpriseAI.Core]
+        KernelService
+        ConversationService
+        ChatRepository
+        SearchService
+    end
+
+    subgraph API[EnterpriseAI.API]
+        ChatController
+    end
+
+    subgraph CLI[EnterpriseAI.CLI]
+        ConsoleProgram
+    end
+
+    subgraph Azure
+        AzureOpenAI[Azure OpenAI]
+        AzureSearch[Azure AI Search]
+    end
+
+    subgraph Config
+        AppSettings[appsettings.json]
+        LocalSettings[appsettings.local.json]
+    end
+
+    %% Core connections
+    KernelService --> AzureOpenAI
+    SearchService --> AzureSearch
+    ConversationService --> KernelService
+    ConversationService --> SearchService
+    ConversationService --> ChatRepository
+
+    %% API connections
+    ChatController --> ConversationService
+    AppSettings --> API
+    LocalSettings --> API
+
+    %% CLI connections
+    ConsoleProgram --> ConversationService
+    AppSettings --> CLI
+    LocalSettings --> CLI
+```
+
+- **Backend (API Server)**:
+
+  - **Technology**: ASP.NET Core
+  - **Role**: Hosts the web API for chat interactions.
+  - **Connections**: Integrates with Azure OpenAI and Search services for AI-driven functionalities.
+  - **Hosting**: Can be hosted locally or on a cloud platform.
+
+- **CLI Application**:
+
+  - **Technology**: .NET Console Application
+  - **Role**: Tests core functionalities of the AI services.
+  - **Connections**: Uses the same core services as the API server.
+
+- **Core Class Library**:
+
+  - **Components**: AIServiceConfig, KernelService, ConversationService, ChatRepository, SearchService, etc.
+  - **Role**: Manages AI operations, including question extraction and answer generation.
+  - **Connections**: Interfaces with Azure services and repositories for data handling.
+
+- **Azure OpenAI and Search Services**:
+
+  - **Role**: Provides AI capabilities and document search functionalities.
+  - **Connections**: Accessed by both the API server and CLI application for processing chat interactions.
+
+- **In-Memory and Database Repositories**:
+
+  - **Role**: Store and retrieve chat messages.
+  - **Connections**: Used to persist conversation history.
+  - **Note**: Database repository is not fully implemented.
 
 ## How it works
 
@@ -94,11 +187,11 @@ Theses diagrams show how:
 
 ## Developer Setup
 
-### 1. Install Required Tooling
+### Install Required Tooling
 
 - Install the [.NET SDK](https://dotnet.microsoft.com/download) (version 6.0 or later).
 
-### 2. Clone the Repository
+### Clone the Repository
 
 Open a terminal and clone the project:
 
@@ -107,7 +200,7 @@ git clone <YOUR_REPO>
 cd EnterpriseAI
 ```
 
-### 3. Setup Local Configuration
+### Setup Local Configuration
 
 Each project (API and CLI) requires its own local settings file for secrets.
 
@@ -130,7 +223,7 @@ Each project (API and CLI) requires its own local settings file for secrets.
 > [!NOTE]
 > The `appsettings.local.json` files are gitignored and won't be committed.
 
-### 4. Build and Run the Project Locally
+### Build and Run the Project Locally
 
 1. Restore and build the solution:
 
@@ -157,107 +250,6 @@ Each project (API and CLI) requires its own local settings file for secrets.
    dotnet watch run --project EnterpriseAI.API
    ```
 
-## Local Settings Setup
-
-Each project (API and CLI) needs its own local settings file for secrets.
-
-1. For the API:
-
-   ```bash
-   cd EnterpriseAI.API
-   cp appsettings.local.template.json appsettings.local.json
-   # Edit appsettings.local.json with your secrets
-   ```
-
-2. For the CLI:
-   ```bash
-   cd EnterpriseAI.CLI
-   cp appsettings.local.template.json appsettings.local.json
-   # Edit appsettings.local.json with your secrets
-   ```
-
-## Architecture
-
-- **Backend (API Server)**:
-
-  - **Technology**: ASP.NET Core
-  - **Role**: Hosts the web API for chat interactions.
-  - **Connections**: Integrates with Azure OpenAI and Search services for AI-driven functionalities.
-  - **Hosting**: Can be hosted locally or on a cloud platform.
-
-- **CLI Application**:
-
-  - **Technology**: .NET Console Application
-  - **Role**: Tests core functionalities of the AI services.
-  - **Connections**: Uses the same core services as the API server.
-
-- **Core Services**:
-
-  - **Components**: AIServiceConfig, KernelService, ConversationService, ChatRepository, SearchService, etc.
-  - **Role**: Manages AI operations, including question extraction and answer generation.
-  - **Connections**: Interfaces with Azure services and repositories for data handling.
-
-- **Azure OpenAI and Search Services**:
-
-  - **Role**: Provides AI capabilities and document search functionalities.
-  - **Connections**: Accessed by both the API server and CLI application for processing chat interactions.
-
-- **In-Memory and Database Repositories**:
-
-  - **Role**: Store and retrieve chat messages.
-  - **Connections**: Used by core services to manage conversation data.
-  - **Note**: Database repository is not fully implemented.
-
-- **Configuration Management**:
-  - **Files**: `appsettings.json`, `appsettings.local.json`
-  - **Role**: Manages application settings and secrets.
-  - **Connections**: Used by both API and CLI applications for configuration.
-
-```mermaid
-graph TD
-    subgraph Core[EnterpriseAI.Core]
-        KernelService
-        ConversationService
-        ChatRepository
-        SearchService
-    end
-
-    subgraph API[EnterpriseAI.API]
-        ChatController
-    end
-
-    subgraph CLI[EnterpriseAI.CLI]
-        ConsoleProgram
-    end
-
-    subgraph Azure
-        AzureOpenAI[Azure OpenAI]
-        AzureSearch[Azure AI Search]
-    end
-
-    subgraph Config
-        AppSettings[appsettings.json]
-        LocalSettings[appsettings.local.json]
-    end
-
-    %% Core connections
-    KernelService --> AzureOpenAI
-    SearchService --> AzureSearch
-    ConversationService --> KernelService
-    ConversationService --> SearchService
-    ConversationService --> ChatRepository
-
-    %% API connections
-    ChatController --> ConversationService
-    AppSettings --> API
-    LocalSettings --> API
-
-    %% CLI connections
-    ConsoleProgram --> ConversationService
-    AppSettings --> CLI
-    LocalSettings --> CLI
-```
-
 ## External APIs
 
 | Name                 | Usage Explanation                                                         | Source Code                                                               |
@@ -269,7 +261,7 @@ graph TD
 
 ### Chat API Endpoints
 
-#### 1. Get Conversation History
+#### Get Conversation History
 
 ```http
 GET /chat/{conversationId}
@@ -298,7 +290,7 @@ Retrieves all messages for a specific conversation.
   ```
 - `404 Not Found`: If the conversation doesn't exist
 
-#### 2. Submit Message
+#### Submit Message
 
 ```http
 POST /chat/{conversationId}/submit
