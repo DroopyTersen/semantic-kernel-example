@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using EnterpriseAI.Core.Configuration;
+﻿using EnterpriseAI.Core.Configuration;
 using EnterpriseAI.Core.Services;
+using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
-    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "./EnterpriseAI.CLI"))
+    .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()
@@ -19,14 +19,14 @@ var conversation = new ConversationService("123", kernel: kernelService.Kernel);
 string? userInput;
 do
 {
-  // Collect user input
-  Console.Write("User > ");
-  userInput = Console.ReadLine();
+    // Collect user input
+    Console.Write("User > ");
+    userInput = Console.ReadLine();
 
-  // Add user input
-  var result = await conversation.SubmitMessageAsync(userInput ?? "No input provied");
+    // Add user input
+    var result = await conversation.SubmitMessageAsync(userInput ?? "No input provied");
 
-  // Print the results
-  Console.WriteLine("Assistant > " + result);
+    // Print the results
+    Console.WriteLine("Assistant > " + result);
 } while (userInput is not null);
 
