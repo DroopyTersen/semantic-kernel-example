@@ -1,5 +1,0 @@
-{
-  "tasks": {
-    "build": "dotnet run build --project EnterpriseAI.API"
-  }
-}
