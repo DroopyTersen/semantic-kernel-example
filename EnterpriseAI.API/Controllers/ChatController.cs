@@ -44,9 +44,42 @@ public class ChatController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("submit")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SubmitChatAsync([FromBody] SubmitChatRequest request)
+    {
+        if (request.Messages == null || !request.Messages.Any())
+        {
+            return BadRequest("Messages array cannot be empty");
+        }
+
+        var chatMessages = request.Messages.Select(m => new ChatMessage(
+            Enum.Parse<MessageRole>(m.Role, true),
+            m.Content
+        )).ToList();
+
+        var answerGenerator = new AnswerGenerator(_kernelService.Kernel);
+        var response = await answerGenerator.AnswerQuestion(chatMessages);
+
+        return Ok(response);
+    }
 }
 
 public record SubmitMessageRequest(
     [property: JsonPropertyName("message")]
     string Message
+);
+
+public record SubmitChatRequest(
+    [property: JsonPropertyName("messages")]
+    List<Message> Messages
+);
+
+public record Message(
+    [property: JsonPropertyName("role")]
+    string Role,
+    [property: JsonPropertyName("content")]
+    string Content
 );
