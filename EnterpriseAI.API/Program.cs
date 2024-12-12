@@ -1,3 +1,5 @@
+using EnterpriseAI.API;
+using EnterpriseAI.API.Middleware;
 using EnterpriseAI.Core.Configuration;
 using EnterpriseAI.Core.Repositories;
 using EnterpriseAI.Core.Services;
@@ -15,7 +17,17 @@ builder
 // Standard API Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Configure API Security
+builder.Services.Configure<ApiSecurityConfig>(builder.Configuration.GetSection("ApiSecurity"));
+var apiSecurityConfig =
+    builder.Configuration.GetSection("ApiSecurity").Get<ApiSecurityConfig>()
+    ?? throw new InvalidOperationException("ApiSecurity configuration is required");
+
+// Configure Swagger with API key auth
+builder.Services.AddSwaggerGen(options =>
+    SwaggerConfiguration.ConfigureSwaggerGen(options, apiSecurityConfig)
+);
 
 // AI Service Config values
 builder.Services.Configure<AIServiceConfig>(builder.Configuration.GetSection("AIService"));
@@ -37,6 +49,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add API key authentication middleware
+app.UseApiKeyAuth();
+
 app.UseAuthorization();
 app.MapControllers();
 
