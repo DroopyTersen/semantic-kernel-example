@@ -13,6 +13,16 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "run-proxy-client",
+      "command": "bun",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/EnterpriseAI.ProxyClient"
+      },
+      "args": ["run", "dev"],
+      "problemMatcher": []
+    },
+    {
       "label": "run-cli",
       "command": "dotnet",
       "type": "process",
@@ -36,16 +46,10 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "watch-cli",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "watch",
-        "run",
-        "--project",
-        "${workspaceFolder}/EnterpriseAI.CLI/EnterpriseAI.CLI.csproj"
-      ],
-      "problemMatcher": "$msCompile"
+      "label": "run-all",
+      "dependsOn": ["watch-api", "run-proxy-client"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
     }
   ]
 }

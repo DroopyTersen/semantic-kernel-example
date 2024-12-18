@@ -6,9 +6,11 @@ namespace EnterpriseAI.Core.Services;
 public class AzureSearchService(SearchClient searchClient) : IHybridSearchService
 {
     private readonly string _ASSISTANT_ID = "37f7e52f-9656-4d00-87c7-b17ba486d525";
+
     public async Task<IEnumerable<SearchDocument>> QueryDocumentsAsync(
         SearchCriteria criteria,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (criteria.Query is null && criteria.Embedding is null)
         {
@@ -22,22 +24,19 @@ public class AzureSearchService(SearchClient searchClient) : IHybridSearchServic
         {
             QueryType = SearchQueryType.Semantic,
             Select =
-      {
-        "id",
-        "assistantId",
-        "chunkType",
-        "dataSourceId",
-        "dataSourceTitle",
-        "dataSourceType",
-        "pageNumber",
-        "position",
-        "content",
-      },
-            Filter = $"assistantId eq '{_ASSISTANT_ID}' and chunkType eq 'text'",
-            SemanticSearch = new()
             {
-                SemanticConfigurationName = "my-semantic-config",
+                "id",
+                "assistantId",
+                "chunkType",
+                "dataSourceId",
+                "dataSourceTitle",
+                "dataSourceType",
+                "pageNumber",
+                "position",
+                "content",
             },
+            Filter = $"assistantId eq '{_ASSISTANT_ID}' and chunkType eq 'text'",
+            SemanticSearch = new() { SemanticConfigurationName = "my-semantic-config" },
             Size = top,
         };
 
@@ -47,7 +46,7 @@ public class AzureSearchService(SearchClient searchClient) : IHybridSearchServic
             {
                 // if semantic ranker is enabled, we need to set the rank to a large number to get more
                 // candidates for semantic reranking
-                KNearestNeighborsCount = 50
+                KNearestNeighborsCount = 50,
             };
             vectorQuery.Fields.Add("embedding");
             searchOptions.VectorSearch = new();
@@ -55,7 +54,10 @@ public class AzureSearchService(SearchClient searchClient) : IHybridSearchServic
         }
 
         var searchResultResponse = await searchClient.SearchAsync<SearchDocument>(
-            criteria?.Query ?? "*", searchOptions, cancellationToken);
+            criteria?.Query ?? "*",
+            searchOptions,
+            cancellationToken
+        );
         if (searchResultResponse.Value is null)
         {
             throw new InvalidOperationException("fail to get search result");

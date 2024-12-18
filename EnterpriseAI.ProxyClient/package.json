@@ -1,0 +1,19 @@
+{
+  "name": "enterpriseai-proxy-client",
+  "scripts": {
+    "dev": "bunx vite"
+  },
+  "dependencies": {
+    "@hono/vite-dev-server": "^0.17.0",
+    "hono": "^4.6.14"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "autoprefixer": "^10.4.20",
+    "bun": "^1.1.39",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.3"
+  }
+}
