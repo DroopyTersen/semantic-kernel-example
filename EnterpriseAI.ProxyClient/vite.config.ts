@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import devServer from "@hono/vite-dev-server";
-import bunAdapter from "@hono/vite-dev-server/bun";
+import nodeAdapter from "@hono/vite-dev-server/node";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -11,19 +11,8 @@ export default defineConfig({
   },
   plugins: [
     devServer({
-      entry: "src/server.tsx",
-      adapter: bunAdapter,
-      // exclude: [
-      //   // We need to override this option since the default setting doesn't fit
-      //   /.*\.tsx?($|\?)/,
-      //   /.*\.(s?css|less)($|\?)/,
-      //   /.*\.(svg|png)($|\?)/,
-      //   /^\/@.+$/,
-      //   /^\/favicon\.ico$/,
-      //   /^\/(public|assets|static)\/.+/,
-      //   /^\/node_modules\/.*/,
-      // ],
-      // injectClientScript: false, // This option is buggy, disable it and inject the code manually
+      entry: "src/server.ts",
+      adapter: nodeAdapter,
     }),
   ],
 });

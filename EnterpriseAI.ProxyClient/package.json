@@ -1,7 +1,7 @@
 {
   "name": "enterpriseai-proxy-client",
   "scripts": {
-    "dev": "bunx vite"
+    "dev": "vite"
   },
   "dependencies": {
     "@hono/vite-dev-server": "^0.17.0",
