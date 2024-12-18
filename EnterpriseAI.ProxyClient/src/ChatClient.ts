@@ -74,7 +74,8 @@ export function createChatClient(options: ChatClientOptions) {
         return;
       }
 
-      assistantMessageContent = await response.text();
+      const data = await response.json();
+      assistantMessageContent = data.content;
     } catch (error) {
       // Handle network or parsing errors
       return;
