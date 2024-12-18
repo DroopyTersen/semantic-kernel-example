@@ -5,10 +5,12 @@
   },
   "dependencies": {
     "@hono/vite-dev-server": "^0.17.0",
+    "@markdoc/markdoc": "^0.4.0",
     "hono": "^4.6.14"
   },
   "type": "module",
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.15",
     "@types/bun": "latest",
     "autoprefixer": "^10.4.20",
     "bun": "^1.1.39",
