@@ -1,4 +1,6 @@
+using System.Text.Json;
 using EnterpriseAI.Core.Models;
+using EnterpriseAI.Core.Plugins;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -14,7 +16,8 @@ public class AnswerGenerator
         _kernel = kernel;
     }
 
-    private static string GetSystemPrompt() => $@"
+    private static string GetSystemPrompt() =>
+        $@"
 You will be provided a list of potentially relevant Data Source pages. Some pages will also include an image of the page if that page contains visual elements like images, charts, or tables.
 
 Use this information as context to answer the question. If provided, make sure to account for visual information represented on the image of the page.
@@ -131,21 +134,47 @@ Source: HR Policy #127, Sections 3.1-3.3, Last Updated March 2024
             messages.Add(ChatMessage.ToKernelMessage(message));
         }
 
-        OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
-        {
-            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-            Temperature = 0.1,
-            MaxTokens = 4000
-        };
+        OpenAIPromptExecutionSettings openAIPromptExecutionSettings =
+            new()
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                Temperature = 0.1,
+                MaxTokens = 4000,
+            };
 
         var result = await _chatService.GetChatMessageContentAsync(
-          messages,
-          executionSettings: openAIPromptExecutionSettings,
-          // Provide the kernel which has the Plugins/tools
-          kernel: _kernel
+            messages,
+            executionSettings: openAIPromptExecutionSettings,
+            kernel: _kernel
         );
 
-        // TODO: Once we are happy with the answers, regex to only return inner <final_output>
-        return result?.Content ?? string.Empty;
+        // Get the last tool message to extract sources
+        var lastToolMessage = messages.Where(m => m.Role == AuthorRole.Tool).LastOrDefault();
+        var content = result?.Content ?? string.Empty;
+
+        if (lastToolMessage != null)
+        {
+            try
+            {
+                var searchResults = JsonSerializer.Deserialize<List<SearchResult>>(
+                    lastToolMessage.Content
+                );
+                if (searchResults != null && searchResults.Any())
+                {
+                    // Append sources in markdown format
+                    content += "\n\n**Sources**\n";
+                    foreach (var source in searchResults.DistinctBy(s => s.DocumentId))
+                    {
+                        content += $"- [{source.DocumentTitle}]({source.DocumentId})\n";
+                    }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Failed to parse tool message content: {ex.Message}");
+            }
+        }
+
+        return content;
     }
 }
